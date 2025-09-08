@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Криптосистема (Caesar Cipher)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<!-- Меню -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">Cipher System</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <!-- <li class="nav-item"><a class="nav-link" href="#">Створити</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Відкрити</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Зберегти</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Друк</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Про розробника</a></li>
+        <li class="nav-item"><a class="nav-link text-danger" href="#">Вихід</a></li> -->
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Контент -->
+<div class="container d-flex flex-column align-items-center justify-content-center vh-100">
+  <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%;">
+    <h3 class="text-center mb-4">Caesar Cipher</h3>
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Text</label>
+        <textarea class="form-control" name="text" rows="3" required></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Shift</label>
+        <input type="number" class="form-control" name="shift" value="3" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Language</label>
+        <select class="form-select" name="lang">
+          <option value="EN">English</option>
+          <option value="UA">Ukrainian</option>
+        </select>
+      </div>
+      <div class="d-flex justify-content-between">
+        <button type="submit" name="action" value="encrypt" class="btn btn-primary">Encrypt</button>
+        <button type="submit" name="action" value="decrypt" class="btn btn-success">Decrypt</button>
+      </div>
+    </form>
+
+    {% if result %}
+    <div class="alert alert-info mt-4">
+      <strong>Result:</strong> {{ result }}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+</body>
+</html>
