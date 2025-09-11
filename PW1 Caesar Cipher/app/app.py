@@ -1,25 +1,27 @@
 from flask import Flask, render_template, request
 
+from cypher_system import CaesarCipher
+
 app = Flask(__name__)
 
-UA = "АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ"
-EN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+# UA = "АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ"
+# EN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-def caesar_cipher(text, shift, alphabet, decrypt=False):
-    result = ""
-    shift = -shift if decrypt else shift
-    alphabet_lower = alphabet.lower()
+# def caesar_cipher(text, shift, alphabet, decrypt=False):
+#     result = ""
+#     shift = -shift if decrypt else shift
+#     alphabet_lower = alphabet.lower()
 
-    for ch in text:
-        if ch.isupper() and ch in alphabet:
-            idx = (alphabet.index(ch) + shift) % len(alphabet)
-            result += alphabet[idx]
-        elif ch.islower() and ch in alphabet_lower:
-            idx = (alphabet_lower.index(ch) + shift) % len(alphabet_lower)
-            result += alphabet_lower[idx]
-        else:
-            result += ch
-    return result
+#     for ch in text:
+#         if ch.isupper() and ch in alphabet:
+#             idx = (alphabet.index(ch) + shift) % len(alphabet)
+#             result += alphabet[idx]
+#         elif ch.islower() and ch in alphabet_lower:
+#             idx = (alphabet_lower.index(ch) + shift) % len(alphabet_lower)
+#             result += alphabet_lower[idx]
+#         else:
+#             result += ch
+#     return result
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -34,15 +36,18 @@ def index():
         lang_value = request.form.get("lang", "EN")
         action = request.form.get("action", "encrypt")
 
-        alphabet = EN if lang_value == "EN" else UA
-        decrypt = (action == "decrypt")
+        cipher = CaesarCipher(shift)
 
-        result = caesar_cipher(text_value, shift, alphabet, decrypt)
+        if action == "encrypt":
+            result = cipher.encrypt(text_value)
+        else:
+            result = cipher.decrypt(text_value)
 
-        
-        if action == "decrypt":
-            for s in range(1, len(alphabet)):
-                decoded = caesar_cipher(text_value, s, alphabet, decrypt=True)
+            # BRUTEFORCE ATTEMPT
+            alphabet_length = 26 if lang_value == "EN" else 33
+            for s in range(1, alphabet_length):
+                brute_cipher = CaesarCipher(s)
+                decoded = brute_cipher.decrypt(text_value)
                 bruteforce_results.append((s, decoded))
 
     return render_template(
@@ -52,6 +57,10 @@ def index():
         text_value=text_value,
         lang_value=lang_value
     )
+
+@app.route("/about/", methods=["GET"])
+def about():
+    return render_template("about.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
