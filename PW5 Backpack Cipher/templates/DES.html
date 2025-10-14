@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="uk">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>DES Cipher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body class="bg-light">
+
+    <!-- Меню -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('cesar') }}">Cipher System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cesar') }}">Caesar Cipher</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('trithemius') }}">Trithemius Cipher</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('poem') }}">Poem Cipher</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('des_cipher') }}">DES Cipher</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                    </li>
+                </ul>
+                <button class="btn btn-danger ms-lg-2" id="quit-link" onclick="quitButton()">Quit</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Контент -->
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3 text-center">DES Cipher (UI)</h4>
+
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for cat, msg in messages %}
+                        <div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
+                            {{ msg }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+
+                        <form method="POST" novalidate>
+                            <div class="mb-3">
+                                <label class="form-label">Текст</label>
+                                <textarea class="form-control" name="text" rows="4"
+                                    required>{{ formdata.get('text', '') }}</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Ключ (8 символів)</label>
+                                <input type="text" class="form-control" name="key"
+                                    value="{{ formdata.get('key', '12345678') }}" maxlength="8" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">IV (8 символів, для CBC/CFB/OFB)</label>
+                                <input type="text" class="form-control" name="iv"
+                                    value="{{ formdata.get('iv', '87654321') }}" maxlength="8">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Режим DES</label>
+                                <select class="form-select" name="mode">
+                                    <option value="ECB" {% if formdata.get('mode')=='ECB' %}selected{% endif %}>ECB
+                                    </option>
+                                    <option value="CBC" {% if formdata.get('mode')=='CBC' %}selected{% endif %}>CBC
+                                    </option>
+                                    <option value="CFB" {% if formdata.get('mode')=='CFB' %}selected{% endif %}>CFB
+                                    </option>
+                                    <option value="OFB" {% if formdata.get('mode')=='OFB' %}selected{% endif %}>OFB
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" name="action" value="encrypt"
+                                    class="btn btn-primary w-50">Encrypt</button>
+                                <button type="submit" name="action" value="decrypt"
+                                    class="btn btn-success w-50">Decrypt</button>
+                            </div>
+                        </form>
+
+                        {% if result %}
+                        <hr>
+                        <h6>Result</h6>
+                        <div class="form-control mb-2" style="white-space:pre-wrap;">{{ result }}</div>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="copyResult()">Copy</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyResult() {
+            const el = document.querySelector('.form-control[style*="white-space"]');
+            if (!el) return;
+            navigator.clipboard.writeText(el.innerText).then(() => {
+                alert('Copied to clipboard');
+            });
+        }
+
+        function quitButton() {
+            if (confirm('Вийти з програми?')) {
+                window.close();
+            }
+        }
+    </script>
+
+</body>
+</html>
